@@ -9,6 +9,7 @@ let itemsPerPage = 12;
 let checkoutDetails = null;
 let draftOrder = null;
 let ordersHistory = [];
+let currentUser = null;
 let currentFilters = {
     category: 'All',
     search: '',
@@ -95,10 +96,12 @@ function getTrackingState(order) {
 }
 
 function setActiveNav(page) {
-    const ids = ['navStore', 'navCart', 'navOrders'];
+    const ids = ['navStore', 'navCart', 'navOrders', 'navAccount', 'navHelp'];
     ids.forEach(id => document.getElementById(id)?.classList.remove('active'));
     if (page === 'orders') document.getElementById('navOrders')?.classList.add('active');
     else if (page === 'cart') document.getElementById('navCart')?.classList.add('active');
+    else if (page === 'account') document.getElementById('navAccount')?.classList.add('active');
+    else if (page === 'help') document.getElementById('navHelp')?.classList.add('active');
     else document.getElementById('navStore')?.classList.add('active');
 }
 
@@ -106,6 +109,8 @@ function setPage(page) {
     const productsSection = document.getElementById('productsSection');
     const cartSection = document.getElementById('cartSection');
     const ordersHistorySection = document.getElementById('ordersHistorySection');
+    const accountSection = document.getElementById('accountSection');
+    const helpSection = document.getElementById('helpSection');
     const checkoutSection = document.getElementById('checkoutSection');
     const paymentSection = document.getElementById('paymentSection');
     const ordersSection = document.querySelector('.orders-section');
@@ -117,6 +122,8 @@ function setPage(page) {
         case 'orders':
             hide(productsSection);
             hide(cartSection);
+            hide(accountSection);
+            hide(helpSection);
             hide(checkoutSection);
             hide(paymentSection);
             show(ordersHistorySection);
@@ -127,15 +134,42 @@ function setPage(page) {
         case 'cart':
             hide(productsSection);
             show(cartSection);
+            hide(accountSection);
+            hide(helpSection);
             hide(checkoutSection);
             hide(paymentSection);
             hide(ordersHistorySection);
             show(ordersSection);
             setActiveNav('cart');
             break;
+        case 'account':
+            hide(productsSection);
+            hide(cartSection);
+            hide(checkoutSection);
+            hide(paymentSection);
+            hide(ordersHistorySection);
+            hide(helpSection);
+            show(accountSection);
+            show(ordersSection);
+            setActiveNav('account');
+            renderAccountSummary();
+            break;
+        case 'help':
+            hide(productsSection);
+            hide(cartSection);
+            hide(checkoutSection);
+            hide(paymentSection);
+            hide(ordersHistorySection);
+            hide(accountSection);
+            show(helpSection);
+            show(ordersSection);
+            setActiveNav('help');
+            break;
         case 'checkout':
             hide(productsSection);
             hide(cartSection);
+            hide(accountSection);
+            hide(helpSection);
             hide(paymentSection);
             hide(ordersHistorySection);
             show(checkoutSection);
@@ -146,6 +180,8 @@ function setPage(page) {
             hide(productsSection);
             hide(cartSection);
             hide(checkoutSection);
+            hide(accountSection);
+            hide(helpSection);
             hide(ordersHistorySection);
             show(paymentSection);
             show(ordersSection);
@@ -154,6 +190,8 @@ function setPage(page) {
         default:
             show(productsSection);
             show(cartSection);
+            hide(accountSection);
+            hide(helpSection);
             hide(checkoutSection);
             hide(paymentSection);
             hide(ordersHistorySection);
@@ -161,6 +199,65 @@ function setPage(page) {
             setActiveNav('store');
             break;
     }
+}
+
+function loadUser() {
+    try {
+        const raw = localStorage.getItem('currentUser');
+        currentUser = raw ? JSON.parse(raw) : null;
+    } catch {
+        currentUser = null;
+    }
+}
+
+function saveUser(user) {
+    currentUser = user;
+    try {
+        if (user) localStorage.setItem('currentUser', JSON.stringify(user));
+        else localStorage.removeItem('currentUser');
+    } catch {
+        // ignore
+    }
+}
+
+function getUsers() {
+    try {
+        const raw = localStorage.getItem('users');
+        const parsed = raw ? JSON.parse(raw) : [];
+        return Array.isArray(parsed) ? parsed : [];
+    } catch {
+        return [];
+    }
+}
+
+function saveUsers(users) {
+    try {
+        localStorage.setItem('users', JSON.stringify(users));
+    } catch {
+        // ignore
+    }
+}
+
+function renderAccountSummary() {
+    const el = document.getElementById('accountSummary');
+    const useBtn = document.getElementById('useAccountForCheckoutBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (!el) return;
+
+    if (!currentUser) {
+        el.innerHTML = `<div class="account-muted">No account created yet.</div>`;
+        if (useBtn) useBtn.disabled = true;
+        if (logoutBtn) logoutBtn.disabled = true;
+        return;
+    }
+
+    el.innerHTML = `
+        <div><strong>Name:</strong> ${currentUser.name}</div>
+        <div><strong>Email:</strong> ${currentUser.email}</div>
+        <div class="account-muted">Saved on this device.</div>
+    `;
+    if (useBtn) useBtn.disabled = false;
+    if (logoutBtn) logoutBtn.disabled = false;
 }
 
 function buildOrderFromCart() {
@@ -250,9 +347,55 @@ function renderPaymentDetails(method) {
     if (payNowBtn) payNowBtn.textContent = 'Place Order';
 }
 
+function scrollToSection(targetId) {
+    const el = document.getElementById(targetId);
+    if (!el) return;
+    const top = el.getBoundingClientRect().top + window.scrollY - 12;
+    window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+}
+
+function initHeaderMenu() {
+    const toggle = document.getElementById('menuToggle');
+    const dropdown = document.getElementById('headerDropdown');
+    if (!toggle || !dropdown) return;
+
+    const open = () => {
+        dropdown.classList.remove('hidden');
+        toggle.setAttribute('aria-expanded', 'true');
+    };
+
+    const close = () => {
+        dropdown.classList.add('hidden');
+        toggle.setAttribute('aria-expanded', 'false');
+    };
+
+    const isOpen = () => !dropdown.classList.contains('hidden');
+
+    toggle.addEventListener('click', () => {
+        if (isOpen()) close();
+        else open();
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!isOpen()) return;
+        const t = e.target;
+        if (toggle.contains(t) || dropdown.contains(t)) return;
+        close();
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && isOpen()) close();
+    });
+
+    // Expose helpers for other handlers
+    window.__headerMenu = { close };
+}
+
 // Initialize the app
 document.addEventListener('DOMContentLoaded', () => {
     initTheme();
+    initHeaderMenu();
+    loadUser();
     loadOrdersHistory();
     initializeServiceWorker();
     initializeFilters();
@@ -260,6 +403,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateConnectionStatus();
     setupEventListeners();
     loadPendingOrders();
+    renderAccountSummary();
     setPage('store');
     
     // Listen for online/offline events
@@ -594,15 +738,30 @@ function setupEventListeners() {
     // Top nav
     document.getElementById('navStore')?.addEventListener('click', () => {
         setPage('store');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        scrollToSection('productsSection');
+        window.__headerMenu?.close?.();
     });
     document.getElementById('navCart')?.addEventListener('click', () => {
         setPage('cart');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        scrollToSection('cartSection');
+        window.__headerMenu?.close?.();
     });
     document.getElementById('navOrders')?.addEventListener('click', () => {
         setPage('orders');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        scrollToSection('ordersHistorySection');
+        window.__headerMenu?.close?.();
+    });
+
+    document.getElementById('navAccount')?.addEventListener('click', () => {
+        setPage('account');
+        scrollToSection('accountSection');
+        window.__headerMenu?.close?.();
+    });
+
+    document.getElementById('navHelp')?.addEventListener('click', () => {
+        setPage('help');
+        scrollToSection('helpSection');
+        window.__headerMenu?.close?.();
     });
 
     // Checkout navigation
@@ -614,12 +773,12 @@ function setupEventListeners() {
         draftOrder = buildOrderFromCart();
         checkoutDetails = null;
         setPage('checkout');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        scrollToSection('checkoutSection');
     });
 
     document.getElementById('backToCartBtn')?.addEventListener('click', () => {
         setPage('cart');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        scrollToSection('cartSection');
     });
 
     document.getElementById('checkoutForm')?.addEventListener('submit', (e) => {
@@ -657,12 +816,81 @@ function setupEventListeners() {
 
         const currentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value || 'card';
         renderPaymentDetails(currentMethod);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        scrollToSection('paymentSection');
     });
 
     document.getElementById('backToCheckoutBtn')?.addEventListener('click', () => {
         setPage('checkout');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        scrollToSection('checkoutSection');
+    });
+
+    // Account creation
+    document.getElementById('signupForm')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const name = document.getElementById('signupName')?.value?.trim();
+        const emailRaw = document.getElementById('signupEmail')?.value?.trim();
+        const email = (emailRaw || '').toLowerCase();
+        const pw1 = document.getElementById('signupPassword')?.value || '';
+        const pw2 = document.getElementById('signupPassword2')?.value || '';
+
+        if (!name || !email || !/^\S+@\S+\.\S+$/.test(email)) {
+            showNotification('Please enter a valid name and email.', 'error');
+            return;
+        }
+        if (pw1.length < 6) {
+            showNotification('Password must be at least 6 characters.', 'error');
+            return;
+        }
+        if (pw1 !== pw2) {
+            showNotification('Passwords do not match.', 'error');
+            return;
+        }
+
+        const users = getUsers();
+        if (users.some(u => u.email === email)) {
+            showNotification('An account with this email already exists on this device.', 'error');
+            return;
+        }
+
+        const user = { id: Date.now(), name, email };
+        users.unshift(user);
+        saveUsers(users);
+        saveUser(user);
+        renderAccountSummary();
+        document.getElementById('signupForm')?.reset();
+        showNotification('Account created!', 'success');
+    });
+
+    document.getElementById('logoutBtn')?.addEventListener('click', () => {
+        saveUser(null);
+        renderAccountSummary();
+        showNotification('Signed out.', 'success');
+    });
+
+    document.getElementById('useAccountForCheckoutBtn')?.addEventListener('click', () => {
+        if (!currentUser) {
+            showNotification('Create an account first.', 'error');
+            return;
+        }
+        const nameEl = document.getElementById('fullName');
+        const emailEl = document.getElementById('email');
+        if (nameEl) nameEl.value = currentUser.name || '';
+        if (emailEl) emailEl.value = currentUser.email || '';
+        showNotification('Filled checkout details from your account.', 'success');
+        setPage('checkout');
+        scrollToSection('checkoutSection');
+    });
+
+    // Help FAQ accordion
+    document.querySelectorAll('.faq-q').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+            const q = e.currentTarget;
+            const a = q?.nextElementSibling;
+            if (!a) return;
+            const expanded = q.getAttribute('aria-expanded') === 'true';
+            q.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+            a.classList.toggle('hidden', expanded);
+        });
     });
 
     document.querySelectorAll('input[name="paymentMethod"]').forEach((radio) => {

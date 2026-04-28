@@ -18,25 +18,38 @@
                 <img class="brand-logo" src="africart.png" onerror="this.onerror=null;this.src='africart.svg';" alt="Afri-cart logo" />
                 <span class="brand-text">Afri-cart Offline Store</span>
             </h1>
-            <div class="header-controls">
-                <nav class="top-nav" aria-label="Primary">
-                    <button id="navStore" class="nav-btn active" type="button">Store</button>
-                    <button id="navCart" class="nav-btn" type="button">Cart</button>
-                    <button id="navOrders" class="nav-btn" type="button">My Orders</button>
-                </nav>
-                <label class="theme-switcher" for="themeSelect">
-                    <span class="theme-label">Theme</span>
-                    <select id="themeSelect" class="theme-select" aria-label="Color theme">
-                        <option value="marketplace">Marketplace (Jumia style)</option>
-                        <option value="tech">The Tech Store</option>
-                        <option value="minimal">Modern/Minimal</option>
-                    </select>
-                </label>
-                <div class="connection-status" id="connectionStatus">
-                    <span class="status-indicator online" id="statusIndicator"></span>
-                    <span id="statusText">Online</span>
+
+            <div class="header-menu">
+                <button id="menuToggle" class="menu-toggle" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="headerDropdown">
+                    <span class="menu-toggle-icon" aria-hidden="true">☰</span>
+                    <span class="menu-toggle-text">Menu</span>
+                </button>
+
+                <div id="headerDropdown" class="header-dropdown hidden" role="menu" aria-label="Header menu">
+                    <nav class="top-nav" aria-label="Primary">
+                        <button id="navStore" class="nav-btn active" type="button">Store</button>
+                        <button id="navCart" class="nav-btn" type="button">Cart</button>
+                        <button id="navOrders" class="nav-btn" type="button">My Orders</button>
+                        <button id="navAccount" class="nav-btn" type="button">Account</button>
+                        <button id="navHelp" class="nav-btn" type="button">Help</button>
+                    </nav>
+
+                    <label class="theme-switcher" for="themeSelect">
+                        <span class="theme-label">Theme</span>
+                        <select id="themeSelect" class="theme-select" aria-label="Color theme">
+                            <option value="marketplace">Marketplace (Jumia style)</option>
+                            <option value="tech">The Tech Store</option>
+                            <option value="minimal">Modern/Minimal</option>
+                        </select>
+                    </label>
+
+                    <div class="connection-status" id="connectionStatus">
+                        <span class="status-indicator online" id="statusIndicator"></span>
+                        <span id="statusText">Online</span>
+                    </div>
+
+                    <button id="enableNotifications" class="btn-notification" type="button">Enable Notifications</button>
                 </div>
-                <button id="enableNotifications" class="btn-notification">Enable Notifications</button>
             </div>
         </div>
     </header>
@@ -104,6 +117,96 @@
                 <p class="section-subtitle">Your recent orders and tracking.</p>
             </div>
             <div id="ordersList" class="orders-list"></div>
+        </section>
+
+        <section class="account-section hidden" id="accountSection">
+            <div class="section-header">
+                <h2>Account</h2>
+                <p class="section-subtitle">Create an account to save your details on this device.</p>
+            </div>
+
+            <div class="account-grid">
+                <div class="account-card">
+                    <h3>Create account</h3>
+                    <form id="signupForm" class="form-grid" novalidate>
+                        <div class="form-field">
+                            <label for="signupName">Full name</label>
+                            <input id="signupName" name="signupName" type="text" autocomplete="name" required />
+                        </div>
+                        <div class="form-field">
+                            <label for="signupEmail">Email</label>
+                            <input id="signupEmail" name="signupEmail" type="email" autocomplete="email" required />
+                        </div>
+                        <div class="form-field">
+                            <label for="signupPassword">Password</label>
+                            <input id="signupPassword" name="signupPassword" type="password" minlength="6" required />
+                        </div>
+                        <div class="form-field">
+                            <label for="signupPassword2">Confirm password</label>
+                            <input id="signupPassword2" name="signupPassword2" type="password" minlength="6" required />
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary">Create Account</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="account-card">
+                    <h3>Your profile</h3>
+                    <div id="accountSummary" class="account-summary">
+                        <div class="account-muted">No account created yet.</div>
+                    </div>
+                    <div class="account-actions">
+                        <button type="button" id="useAccountForCheckoutBtn" class="btn-secondary">Use for Checkout</button>
+                        <button type="button" id="logoutBtn" class="btn-secondary">Sign Out</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="help-section hidden" id="helpSection">
+            <div class="section-header">
+                <h2>Help</h2>
+                <p class="section-subtitle">Quick answers and support information.</p>
+            </div>
+
+            <div class="help-grid">
+                <div class="help-card">
+                    <h3>Frequently asked questions</h3>
+
+                    <div class="faq">
+                        <button class="faq-q" type="button" aria-expanded="false">
+                            How does offline shopping work?
+                        </button>
+                        <div class="faq-a hidden">
+                            You can browse products and add items to cart offline. Orders placed offline are queued and sync when you’re back online.
+                        </div>
+
+                        <button class="faq-q" type="button" aria-expanded="false">
+                            Why do I see “Pending sync” on orders?
+                        </button>
+                        <div class="faq-a hidden">
+                            It means your order is saved on this device and will be sent once you regain internet access.
+                        </div>
+
+                        <button class="faq-q" type="button" aria-expanded="false">
+                            How do notifications work?
+                        </button>
+                        <div class="faq-a hidden">
+                            Tap “Enable Notifications” and allow permission. You’ll receive updates and promo notifications from this app.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="help-card">
+                    <h3>Contact</h3>
+                    <div class="help-contact">
+                        <div><strong>Email:</strong> <a href="mailto:support@africart.example">support@africart.example</a></div>
+                        <div><strong>WhatsApp:</strong> <a href="tel:+2340000000000">+234 000 000 0000</a></div>
+                        <div class="help-note">Replace these with your real support details when ready.</div>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <section class="checkout-section hidden" id="checkoutSection">

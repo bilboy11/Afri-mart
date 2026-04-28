@@ -101,9 +101,6 @@ header {
     color: var(--header-fg);
     padding: 1.5rem 0;
     box-shadow: var(--shadow-lg);
-    position: sticky;
-    top: 0;
-    z-index: 100;
     backdrop-filter: blur(10px);
     border-bottom: 1px solid color-mix(in srgb, var(--header-fg) 12%, transparent);
 }
@@ -146,10 +143,58 @@ header h1 {
     font-weight: 800;
 }
 
-.header-controls {
+/* Header dropdown menu (top-right) */
+.header-menu {
+    position: relative;
     display: flex;
     align-items: center;
-    gap: 1rem;
+    justify-content: flex-end;
+}
+
+.menu-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: color-mix(in srgb, var(--header-fg) 14%, transparent);
+    color: var(--header-fg);
+    border: 1px solid color-mix(in srgb, var(--header-fg) 22%, transparent);
+    padding: 0.55rem 0.9rem;
+    border-radius: 999px;
+    cursor: pointer;
+    font-weight: 800;
+    backdrop-filter: blur(10px);
+    transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.menu-toggle:hover {
+    background: color-mix(in srgb, var(--header-fg) 22%, transparent);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+}
+
+.menu-toggle-icon {
+    font-size: 1.05rem;
+    line-height: 1;
+}
+
+.menu-toggle-text {
+    font-size: 0.9rem;
+}
+
+.header-dropdown {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 0.75rem);
+    width: min(360px, calc(100vw - 32px));
+    padding: 0.85rem;
+    border-radius: 16px;
+    background: color-mix(in srgb, var(--header-bg) 78%, #000 22%);
+    border: 1px solid color-mix(in srgb, var(--header-fg) 18%, transparent);
+    box-shadow: var(--shadow-xl);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    z-index: 100;
 }
 
 .top-nav {
@@ -325,6 +370,104 @@ main {
     margin-top: 2rem;
     box-shadow: var(--shadow-lg);
     border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.account-section,
+.help-section {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    padding: 2.5rem;
+    border-radius: 20px;
+    margin-top: 2rem;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.account-grid,
+.help-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.account-card,
+.help-card {
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 1.25rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.account-card h3,
+.help-card h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+    color: var(--dark-color);
+}
+
+.account-summary {
+    padding: 0.85rem 1rem;
+    border-radius: 14px;
+    background: rgba(var(--btn-primary-rgb), 0.06);
+    border: 1px solid rgba(var(--btn-primary-rgb), 0.16);
+    color: var(--dark-secondary);
+}
+
+.account-muted {
+    color: var(--text-muted);
+}
+
+.account-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    margin-top: 0.9rem;
+}
+
+.faq {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.faq-q {
+    width: 100%;
+    text-align: left;
+    background: white;
+    border: 1px solid var(--border-color);
+    color: var(--dark-color);
+    padding: 0.85rem 1rem;
+    border-radius: 14px;
+    cursor: pointer;
+    font-weight: 800;
+    box-shadow: var(--shadow-sm);
+}
+
+.faq-a {
+    padding: 0.85rem 1rem;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px dashed var(--border-color);
+    color: var(--dark-secondary);
+}
+
+.help-contact a {
+    color: var(--primary-color);
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.help-contact a:hover {
+    text-decoration: underline;
+}
+
+.help-note {
+    margin-top: 0.75rem;
+    color: var(--text-muted);
+    font-size: 0.95rem;
 }
 
 .orders-history-section {
@@ -539,6 +682,13 @@ main {
     .form-grid,
     .payment-options,
     #paymentDetails {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 900px) {
+    .account-grid,
+    .help-grid {
         grid-template-columns: 1fr;
     }
 }
@@ -1192,9 +1342,9 @@ main {
         gap: 1.5rem;
     }
 
-    .header-controls {
+    .header-menu {
         width: 100%;
-        justify-content: space-between;
+        justify-content: flex-end;
         margin-top: 1rem;
     }
 
@@ -1273,15 +1423,13 @@ main {
         align-items: flex-start;
     }
 
-    .header-controls {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 0.75rem;
+    .header-dropdown {
+        width: min(360px, calc(100vw - 24px));
+        padding: 0.75rem;
     }
 
     .top-nav {
         width: 100%;
-        justify-content: space-between;
     }
 
     .nav-btn {
@@ -1289,14 +1437,11 @@ main {
         text-align: center;
     }
 
-    .theme-switcher {
+    .theme-switcher,
+    .connection-status,
+    .btn-notification {
         width: 100%;
         justify-content: space-between;
-    }
-
-    .theme-select {
-        width: 100%;
-        text-align: right;
     }
 }
 
