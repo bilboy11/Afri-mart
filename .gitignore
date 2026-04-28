@@ -1,0 +1,6 @@
+node_modules/
+.DS_Store
+*.log
+.sw.js
+workbox-*.js
+*.map

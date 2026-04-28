@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Offline-First E-Commerce Store">
+    <meta name="theme-color" content="#4a90e2">
+    <title>Afri-mart</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/png" href="icons/icon-192x192.png">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>🛍️ Afri-mart Offline Store</h1>
+            <div class="header-controls">
+                <nav class="top-nav" aria-label="Primary">
+                    <button id="navStore" class="nav-btn active" type="button">Store</button>
+                    <button id="navCart" class="nav-btn" type="button">Cart</button>
+                    <button id="navOrders" class="nav-btn" type="button">My Orders</button>
+                </nav>
+                <div class="connection-status" id="connectionStatus">
+                    <span class="status-indicator online" id="statusIndicator"></span>
+                    <span id="statusText">Online</span>
+                </div>
+                <button id="enableNotifications" class="btn-notification">Enable Notifications</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="hero">
+            <h2>Welcome to Our Store</h2>
+            <p>Shop seamlessly, even when you're offline!</p>
+        </section>
+
+        <section class="products" id="productsSection">
+            <div class="products-header">
+                <h2>Our Products</h2>
+                <div class="products-count" id="productsCount"></div>
+            </div>
+            
+            <div class="filters-section">
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="Search products..." class="search-input">
+                    <button class="search-btn">🔍</button>
+                </div>
+                
+                <div class="filters">
+                    <select id="categoryFilter" class="filter-select">
+                        <option value="All">All Categories</option>
+                    </select>
+                    
+                    <select id="sortFilter" class="filter-select">
+                        <option value="">Sort By</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                        <option value="name">Name: A to Z</option>
+                        <option value="rating">Highest Rated</option>
+                    </select>
+                    
+                    <div class="price-filter">
+                        <input type="number" id="minPrice" placeholder="Min ₦" class="price-input" min="0">
+                        <span>-</span>
+                        <input type="number" id="maxPrice" placeholder="Max ₦" class="price-input" min="0">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="products-grid" id="productsGrid">
+                <!-- Products will be dynamically loaded -->
+            </div>
+            
+            <div class="pagination" id="pagination">
+                <!-- Pagination will be dynamically loaded -->
+            </div>
+        </section>
+
+        <section class="cart-section" id="cartSection">
+            <h2>Your Cart</h2>
+            <div id="cartItems" class="cart-items"></div>
+            <div class="cart-total">
+                <strong>Total: <span id="cartTotal">₦0.00</span></strong>
+            </div>
+            <button id="checkoutBtn" class="btn-primary">Proceed to Checkout</button>
+        </section>
+
+        <section class="orders-history-section hidden" id="ordersHistorySection">
+            <div class="section-header">
+                <h2>My Orders</h2>
+                <p class="section-subtitle">Your recent orders and tracking.</p>
+            </div>
+            <div id="ordersList" class="orders-list"></div>
+        </section>
+
+        <section class="checkout-section hidden" id="checkoutSection">
+            <div class="section-header">
+                <h2>Checkout</h2>
+                <p class="section-subtitle">Enter your delivery details to continue.</p>
+            </div>
+            <form id="checkoutForm" class="form-grid" novalidate>
+                <div class="form-field">
+                    <label for="fullName">Full name</label>
+                    <input id="fullName" name="fullName" type="text" autocomplete="name" required />
+                </div>
+                <div class="form-field">
+                    <label for="phone">Phone</label>
+                    <input id="phone" name="phone" type="tel" autocomplete="tel" required />
+                </div>
+                <div class="form-field">
+                    <label for="email">Email (optional)</label>
+                    <input id="email" name="email" type="email" autocomplete="email" />
+                </div>
+                <div class="form-field form-field-full">
+                    <label for="address">Delivery address</label>
+                    <input id="address" name="address" type="text" autocomplete="street-address" required />
+                </div>
+                <div class="form-field">
+                    <label for="city">City</label>
+                    <input id="city" name="city" type="text" autocomplete="address-level2" required />
+                </div>
+                <div class="form-field">
+                    <label for="state">State</label>
+                    <input id="state" name="state" type="text" autocomplete="address-level1" required />
+                </div>
+                <div class="form-actions">
+                    <button type="button" id="backToCartBtn" class="btn-secondary">Back to Cart</button>
+                    <button type="submit" class="btn-primary">Continue to Payment</button>
+                </div>
+            </form>
+        </section>
+
+        <section class="payment-section hidden" id="paymentSection">
+            <div class="section-header">
+                <h2>Payment</h2>
+                <p class="section-subtitle">Choose how you want to pay.</p>
+            </div>
+
+            <div class="order-summary" id="orderSummary"></div>
+
+            <form id="paymentForm" class="payment-form" novalidate>
+                <div class="payment-options">
+                    <label class="payment-option">
+                        <input type="radio" name="paymentMethod" value="card" checked />
+                        <span>Card</span>
+                    </label>
+                    <label class="payment-option">
+                        <input type="radio" name="paymentMethod" value="transfer" />
+                        <span>Bank Transfer</span>
+                    </label>
+                    <label class="payment-option">
+                        <input type="radio" name="paymentMethod" value="ussd" />
+                        <span>USSD</span>
+                    </label>
+                    <label class="payment-option">
+                        <input type="radio" name="paymentMethod" value="cod" />
+                        <span>Pay on Delivery</span>
+                    </label>
+                </div>
+
+                <div id="paymentDetails"></div>
+
+                <div class="form-actions">
+                    <button type="button" id="backToCheckoutBtn" class="btn-secondary">Back</button>
+                    <button type="submit" id="payNowBtn" class="btn-primary">Pay Now</button>
+                </div>
+            </form>
+        </section>
+
+        <section class="orders-section">
+            <h2>Pending Orders (Offline)</h2>
+            <div id="pendingOrders" class="pending-orders"></div>
+        </section>
+    </main>
+
+    <div id="notification" class="notification"></div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>

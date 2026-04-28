@@ -1,0 +1,32 @@
+{
+  "name": "pwa-ecommerce",
+  "version": "1.0.0",
+  "description": "Offline-First E-Commerce PWA with Background Sync and Push Notifications",
+  "main": "index.html",
+  "scripts": {
+    "start": "http-server -p 8080 -c-1",
+    "build": "workbox generateSW workbox-config.js",
+    "dev": "http-server -p 8080 -c-1"
+  },
+  "keywords": [
+    "pwa",
+    "ecommerce",
+    "offline",
+    "service-worker",
+    "workbox"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "workbox-window": "^7.0.0",
+    "workbox-routing": "^7.0.0",
+    "workbox-strategies": "^7.0.0",
+    "workbox-precaching": "^7.0.0",
+    "workbox-background-sync": "^7.0.0",
+    "workbox-broadcast-update": "^7.0.0"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1",
+    "workbox-cli": "^7.0.0"
+  }
+}
