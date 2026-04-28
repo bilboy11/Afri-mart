@@ -20,6 +20,41 @@ let currentFilters = {
 const formatCurrency = (amount) =>
     new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(amount);
 
+function setTheme(theme) {
+    const next = theme === 'tech' || theme === 'minimal' || theme === 'marketplace' ? theme : 'marketplace';
+    document.documentElement.dataset.theme = next;
+
+    const metaTheme = document.querySelector('meta[name="theme-color"]');
+    if (metaTheme) {
+        const primary = getComputedStyle(document.documentElement).getPropertyValue('--btn-primary').trim();
+        metaTheme.setAttribute('content', primary || '#F68B1E');
+    }
+
+    try {
+        localStorage.setItem('theme', next);
+    } catch {
+        // ignore
+    }
+}
+
+function initTheme() {
+    const select = document.getElementById('themeSelect');
+    let saved = 'marketplace';
+    try {
+        saved = localStorage.getItem('theme') || 'marketplace';
+    } catch {
+        saved = 'marketplace';
+    }
+
+    const initial = saved === 'tech' || saved === 'minimal' || saved === 'marketplace' ? saved : 'marketplace';
+    if (select) select.value = initial;
+    setTheme(initial);
+
+    select?.addEventListener('change', (e) => {
+        setTheme(e.target.value);
+    });
+}
+
 function loadOrdersHistory() {
     try {
         const raw = localStorage.getItem('ordersHistory');
@@ -217,6 +252,7 @@ function renderPaymentDetails(method) {
 
 // Initialize the app
 document.addEventListener('DOMContentLoaded', () => {
+    initTheme();
     loadOrdersHistory();
     initializeServiceWorker();
     initializeFilters();

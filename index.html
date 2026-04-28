@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Offline-First E-Commerce Store">
-    <meta name="theme-color" content="#4a90e2">
+    <meta name="theme-color" content="#003B7A">
     <title>Afri-mart</title>
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="styles.css">
@@ -20,6 +20,14 @@
                     <button id="navCart" class="nav-btn" type="button">Cart</button>
                     <button id="navOrders" class="nav-btn" type="button">My Orders</button>
                 </nav>
+                <label class="theme-switcher" for="themeSelect">
+                    <span class="theme-label">Theme</span>
+                    <select id="themeSelect" class="theme-select" aria-label="Color theme">
+                        <option value="marketplace">Marketplace (Jumia style)</option>
+                        <option value="tech">The Tech Store</option>
+                        <option value="minimal">Modern/Minimal</option>
+                    </select>
+                </label>
                 <div class="connection-status" id="connectionStatus">
                     <span class="status-indicator online" id="statusIndicator"></span>
                     <span id="statusText">Online</span>
