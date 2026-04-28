@@ -8,12 +8,16 @@
     <title>Afri-cart</title>
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="styles.css">
-    <link rel="icon" type="image/png" href="icons/icon-192x192.png">
+    <link rel="icon" href="africart.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="africart.svg">
 </head>
 <body>
     <header>
         <div class="container">
-            <h1>🛍️ Afri-cart Offline Store</h1>
+            <h1 class="brand">
+                <img class="brand-logo" src="africart.png" onerror="this.onerror=null;this.src='africart.svg';" alt="Afri-cart logo" />
+                <span class="brand-text">Afri-cart Offline Store</span>
+            </h1>
             <div class="header-controls">
                 <nav class="top-nav" aria-label="Primary">
                     <button id="navStore" class="nav-btn active" type="button">Store</button>
