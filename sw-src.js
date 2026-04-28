@@ -2,7 +2,7 @@
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/7.0.0/workbox-sw.js');
 
 if (workbox) {
-  workbox.precaching.precacheAndRoute([{"revision":"7e1eb39c2c19f75ac565fbd4b9f0d913","url":"workbox-config.js"},{"revision":"1f7849d912a187d1c724bce439e36cfe","url":"sw-template.js"},{"revision":"05fc7fa85edc60d5bc144bc372585c5e","url":"styles.css"},{"revision":"3a5316dbbb2fdaef5003ba4a16ab15c8","url":"purchase-manager.js"},{"revision":"d4a027376465e1a6c9e7b750cb273b7f","url":"products-data.js"},{"revision":"e27b09bb0373d34ad978d4a117f0538e","url":"package.json"},{"revision":"1e4c28d43115270e896244a8e4d3eccd","url":"package-lock.json"},{"revision":"dd99d8fb4727eb7890f1a7ed0ec8a76e","url":"notification-manager.js"},{"revision":"4ed20323291655e6aace0cec6a13ab7c","url":"manifest.json"},{"revision":"8b5356d96bff3ae6f825a789102744cb","url":"index.html"},{"revision":"76e25ed43e52ff04117bf855267fc033","url":"app.js"},{"revision":"796b4956d4319d3b72bcc7a2ebfe94e2","url":"api-server.js"}] || []);
+  workbox.precaching.precacheAndRoute(self.__WB_MANIFEST || []);
   
   workbox.routing.registerRoute(
     ({request}) => request.destination === 'image',
