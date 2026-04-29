@@ -122,11 +122,11 @@
         <section class="account-section hidden" id="accountSection">
             <div class="section-header">
                 <h2>Account</h2>
-                <p class="section-subtitle">Create an account to save your details on this device.</p>
+                <p class="section-subtitle">Sign up, log in, and sign out anytime.</p>
             </div>
 
             <div class="account-grid">
-                <div class="account-card">
+                <div class="account-card" id="signupCard">
                     <h3>Create account</h3>
                     <form id="signupForm" class="form-grid" novalidate>
                         <div class="form-field">
@@ -151,7 +151,24 @@
                     </form>
                 </div>
 
-                <div class="account-card">
+                <div class="account-card" id="loginCard">
+                    <h3>Log in</h3>
+                    <form id="loginForm" class="form-grid" novalidate>
+                        <div class="form-field">
+                            <label for="loginEmail">Email</label>
+                            <input id="loginEmail" name="loginEmail" type="email" autocomplete="email" required />
+                        </div>
+                        <div class="form-field">
+                            <label for="loginPassword">Password</label>
+                            <input id="loginPassword" name="loginPassword" type="password" minlength="6" required />
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary">Log In</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="account-card" id="profileCard">
                     <h3>Your profile</h3>
                     <div id="accountSummary" class="account-summary">
                         <div class="account-muted">No account created yet.</div>

@@ -242,12 +242,16 @@ function renderAccountSummary() {
     const el = document.getElementById('accountSummary');
     const useBtn = document.getElementById('useAccountForCheckoutBtn');
     const logoutBtn = document.getElementById('logoutBtn');
+    const signupCard = document.getElementById('signupCard');
+    const loginCard = document.getElementById('loginCard');
     if (!el) return;
 
     if (!currentUser) {
         el.innerHTML = `<div class="account-muted">No account created yet.</div>`;
         if (useBtn) useBtn.disabled = true;
         if (logoutBtn) logoutBtn.disabled = true;
+        signupCard?.classList.remove('hidden');
+        loginCard?.classList.remove('hidden');
         return;
     }
 
@@ -258,6 +262,8 @@ function renderAccountSummary() {
     `;
     if (useBtn) useBtn.disabled = false;
     if (logoutBtn) logoutBtn.disabled = false;
+    signupCard?.classList.add('hidden');
+    loginCard?.classList.add('hidden');
 }
 
 function getApiBaseUrl() {
@@ -877,6 +883,51 @@ function setupEventListeners() {
             })
             .catch((err) => {
                 showNotification(err?.message || 'Signup failed.', 'error');
+            })
+            .finally(() => {
+                if (submitBtn) submitBtn.disabled = false;
+            });
+    });
+
+    // Login
+    document.getElementById('loginForm')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const emailRaw = document.getElementById('loginEmail')?.value?.trim();
+        const email = (emailRaw || '').toLowerCase();
+        const password = document.getElementById('loginPassword')?.value || '';
+
+        if (!email || !/^\S+@\S+\.\S+$/.test(email) || password.length < 6) {
+            showNotification('Enter a valid email and password.', 'error');
+            return;
+        }
+
+        const form = document.getElementById('loginForm');
+        const submitBtn = form?.querySelector('button[type="submit"]');
+        if (submitBtn) submitBtn.disabled = true;
+
+        fetch(`${getApiBaseUrl()}/api/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        })
+            .then(async (res) => {
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok) {
+                    const msg = data?.error || `Login failed (${res.status})`;
+                    throw new Error(msg);
+                }
+                return data;
+            })
+            .then((data) => {
+                const user = data?.user;
+                if (!user?.email) throw new Error('Login failed.');
+                saveUser(user);
+                renderAccountSummary();
+                document.getElementById('loginForm')?.reset();
+                showNotification('Logged in!', 'success');
+            })
+            .catch((err) => {
+                showNotification(err?.message || 'Login failed.', 'error');
             })
             .finally(() => {
                 if (submitBtn) submitBtn.disabled = false;
