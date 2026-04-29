@@ -260,6 +260,11 @@ function renderAccountSummary() {
     if (logoutBtn) logoutBtn.disabled = false;
 }
 
+function getApiBaseUrl() {
+    // Frontend is served on :8080, API on :3000 (local/dev)
+    return localStorage.getItem('apiBaseUrl') || 'http://127.0.0.1:3000';
+}
+
 function buildOrderFromCart() {
     return {
         id: Date.now(),
@@ -846,19 +851,36 @@ function setupEventListeners() {
             return;
         }
 
-        const users = getUsers();
-        if (users.some(u => u.email === email)) {
-            showNotification('An account with this email already exists on this device.', 'error');
-            return;
-        }
+        const form = document.getElementById('signupForm');
+        const submitBtn = form?.querySelector('button[type="submit"]');
+        if (submitBtn) submitBtn.disabled = true;
 
-        const user = { id: Date.now(), name, email };
-        users.unshift(user);
-        saveUsers(users);
-        saveUser(user);
-        renderAccountSummary();
-        document.getElementById('signupForm')?.reset();
-        showNotification('Account created!', 'success');
+        fetch(`${getApiBaseUrl()}/api/signup`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, email, password: pw1 })
+        })
+            .then(async (res) => {
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok) {
+                    const msg = data?.error || `Signup failed (${res.status})`;
+                    throw new Error(msg);
+                }
+                return data;
+            })
+            .then((data) => {
+                const user = data?.user || { id: Date.now(), name, email };
+                saveUser(user);
+                renderAccountSummary();
+                document.getElementById('signupForm')?.reset();
+                showNotification('Account created!', 'success');
+            })
+            .catch((err) => {
+                showNotification(err?.message || 'Signup failed.', 'error');
+            })
+            .finally(() => {
+                if (submitBtn) submitBtn.disabled = false;
+            });
     });
 
     document.getElementById('logoutBtn')?.addEventListener('click', () => {
